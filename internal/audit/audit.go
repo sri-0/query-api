@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"log/slog"
 	"net/http"
 	"time"
@@ -41,6 +42,20 @@ func NewWriter(client *osclient.Client, index string, log *slog.Logger) *Writer 
 	w := &Writer{client: client, index: index, ch: make(chan Entry, 1024), log: log}
 	go w.run()
 	return w
+}
+
+// EnsureIndex creates the audit index when missing and pushes the current
+// mapping so fields added later (e.g. `saved`) exist without a reseed.
+func EnsureIndex(ctx context.Context, client *osclient.Client, index string, body map[string]any) error {
+	if err := client.Do(ctx, http.MethodGet, "/"+index, nil, nil); err != nil {
+		var ose *osclient.Error
+		if !errors.As(err, &ose) || ose.Status != http.StatusNotFound {
+			return err
+		}
+		return client.Do(ctx, http.MethodPut, "/"+index, body, nil)
+	}
+	mappings, _ := body["mappings"].(map[string]any)
+	return client.Do(ctx, http.MethodPut, "/"+index+"/_mapping", mappings, nil)
 }
 
 // NewID returns a random 20-hex-char id.

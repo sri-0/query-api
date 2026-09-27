@@ -37,7 +37,7 @@ func New(cfg config.Config, os *osclient.Client, reg *schema.Registry, b *query.
 	e.HTTPErrorHandler = s.errorHandler
 	e.Use(echomw.Recover())
 	e.Use(echomw.RequestID())
-	e.Use(echomw.CORSWithConfig(echomw.CORSConfig{AllowOrigins: cfg.CORSOrigins, AllowHeaders: []string{"*"}, AllowMethods: []string{"GET", "POST", "OPTIONS"}}))
+	e.Use(echomw.CORSWithConfig(echomw.CORSConfig{AllowOrigins: cfg.CORSOrigins, AllowHeaders: []string{"*"}, AllowMethods: []string{"GET", "POST", "PATCH", "OPTIONS"}}))
 	e.Use(middleware.Auth())
 	e.Use(middleware.RequestLog(log, cfg.LogBodies))
 	e.Use(echomw.BodyLimit("1M"))
@@ -55,6 +55,7 @@ func New(cfg config.Config, os *osclient.Client, reg *schema.Registry, b *query.
 	v1.POST("/search/validate", s.searchValidate)
 	v1.GET("/queries", s.listQueries)
 	v1.GET("/queries/:id", s.getQuery)
+	v1.PATCH("/queries/:id", s.patchQuery)
 	return e
 }
 

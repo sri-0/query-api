@@ -2,6 +2,7 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"strconv"
@@ -35,7 +36,13 @@ func main() {
 		fatal(log, "embedder", err)
 	}
 	builder := &query.Builder{Registry: reg, Embedder: emb, TrackTotalHits: trackTotalHits(cfg.TrackTotalHits), MaxSize: 500}
-	aw := audit.NewWriter(client, reg.IndexName("queries"), log)
+	auditIndex := reg.IndexName("queries")
+	if m, ok := reg.Model("queries"); ok {
+		if err := audit.EnsureIndex(context.Background(), client, auditIndex, m.IndexMapping()); err != nil {
+			log.Warn("audit index not ready; queries will still be attempted", "err", err)
+		}
+	}
+	aw := audit.NewWriter(client, auditIndex, log)
 
 	e := server.New(cfg, client, reg, builder, aw, log)
 	log.Info("listening", "port", cfg.Port, "prefix", cfg.IndexPrefix, "models", len(reg.Public()), "embedder", cfg.EmbedProvider)
