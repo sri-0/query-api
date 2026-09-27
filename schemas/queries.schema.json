@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "queries",
+  "description": "Audit of queries executed through the query API.",
+  "x-time-field": "created_at",
+  "x-internal": true,
+  "type": "object",
+  "properties": {
+    "created_at":   {"type": "string", "format": "date-time"},
+    "user":         {"type": "string", "x-opensearch": {"type": "keyword"}},
+    "indices":      {"type": "array", "items": {"type": "string"}},
+    "lucene":       {"type": "string", "x-opensearch": {"type": "keyword", "ignore_above": 4096}},
+    "text":         {"type": "string", "x-opensearch": {"type": "keyword", "ignore_above": 4096}},
+    "semantic":     {"type": "string", "x-opensearch": {"type": "keyword", "ignore_above": 4096}},
+    "filter_count": {"type": "integer"},
+    "request":      {"type": "object", "x-opensearch": {"type": "object", "enabled": false}},
+    "result_count": {"type": "integer"},
+    "took_ms":      {"type": "integer"},
+    "client":       {"type": "string", "x-opensearch": {"type": "keyword"}}
+  }
+}

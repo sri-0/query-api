@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "alerts",
+  "description": "Security detections raised by rules.",
+  "x-time-field": "timestamp",
+  "type": "object",
+  "properties": {
+    "timestamp":    {"type": "string", "format": "date-time", "description": "Detection time (UTC)."},
+    "severity":     {"type": "string", "enum": ["low", "medium", "high", "critical"], "description": "Alert severity.", "x-ui": {"cell": "badge"}},
+    "rule_id":      {"type": "string", "description": "Rule identifier.", "x-opensearch": {"type": "keyword"}, "x-ui": {"cell": "code"}},
+    "rule_name":    {"type": "string", "description": "Rule name.", "x-opensearch": {"type": "keyword"}},
+    "host":         {"type": "string", "description": "Affected host.", "x-opensearch": {"type": "keyword"}},
+    "src_ip":       {"type": "string", "format": "ipv4", "description": "Source IP."},
+    "dst_ip":       {"type": "string", "format": "ipv4", "description": "Destination IP."},
+    "dst_port":     {"type": "integer", "description": "Destination port."},
+    "mac":          {"type": "string", "format": "mac", "description": "Source MAC address."},
+    "message":      {"type": "string", "description": "Detection summary.", "x-opensearch": {"type": "text"}},
+    "acknowledged": {"type": "boolean", "description": "Acknowledged by an analyst."},
+    "location":     {"type": "object", "description": "Source geo location.", "x-opensearch": {"type": "geo_point"}},
+    "tags":         {"type": "array", "items": {"type": "string"}, "description": "Free-form tags."},
+    "embedding":    {"type": "array", "items": {"type": "number"}, "description": "Semantic embedding of message.", "x-opensearch": {"type": "knn_vector", "dimension": 384}}
+  }
+}

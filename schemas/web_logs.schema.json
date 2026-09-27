@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "web_logs",
+  "description": "HTTP access and application log events from the web tier.",
+  "x-time-field": "timestamp",
+  "type": "object",
+  "properties": {
+    "timestamp":  {"type": "string", "format": "date-time", "description": "Event time (UTC)."},
+    "level":      {"type": "string", "enum": ["debug", "info", "warn", "error"], "description": "Log level.", "x-ui": {"cell": "level"}},
+    "method":     {"type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"], "description": "HTTP method."},
+    "status":     {"type": "integer", "minimum": 100, "maximum": 599, "description": "HTTP status code.", "x-ui": {"cell": "status-code"}},
+    "path":       {"type": "string", "description": "Request path.", "x-opensearch": {"type": "keyword"}},
+    "host":       {"type": "string", "description": "Serving host.", "x-opensearch": {"type": "keyword"}},
+    "region":     {"type": "string", "enum": ["ap-southeast-2", "us-east-1", "us-west-2", "eu-west-1", "eu-central-1"], "description": "Deployment region."},
+    "src_ip":     {"type": "string", "format": "ipv4", "description": "Client IP address."},
+    "dst_ip":     {"type": "string", "format": "ipv4", "description": "Server IP address."},
+    "mac":        {"type": "string", "format": "mac", "description": "Client MAC address (when known)."},
+    "bytes":      {"type": "integer", "description": "Response size in bytes."},
+    "latency_ms": {"type": "number", "description": "Request latency in milliseconds."},
+    "user_agent": {"type": "string", "description": "User agent string.", "x-opensearch": {"type": "text"}},
+    "message":    {"type": "string", "description": "Log message.", "x-opensearch": {"type": "text"}},
+    "tags":       {"type": "array", "items": {"type": "string"}, "description": "Free-form tags."},
+    "active":     {"type": "boolean", "description": "Session still active at time of event."},
+    "location":   {"type": "object", "description": "Client geo location.", "x-opensearch": {"type": "geo_point"}},
+    "trace_id":   {"type": "string", "description": "Distributed trace id.", "x-opensearch": {"type": "keyword"}, "x-ui": {"cell": "code", "defaultVisible": false}},
+    "embedding":  {"type": "array", "items": {"type": "number"}, "description": "Semantic embedding of message.", "x-opensearch": {"type": "knn_vector", "dimension": 384}}
+  }
+}

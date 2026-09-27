@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "devices",
+  "description": "Network devices discovered on the estate.",
+  "x-time-field": "timestamp",
+  "type": "object",
+  "properties": {
+    "timestamp":  {"type": "string", "format": "date-time", "description": "Last seen time (UTC)."},
+    "first_seen": {"type": "string", "format": "date-time", "description": "First discovery time."},
+    "host":       {"type": "string", "description": "Hostname.", "x-opensearch": {"type": "keyword"}},
+    "ip":         {"type": "string", "format": "ipv4", "description": "Primary IP address."},
+    "mac":        {"type": "string", "format": "mac", "description": "MAC address."},
+    "vendor":     {"type": "string", "enum": ["Cisco", "Juniper", "Dell", "HP", "Apple", "Ubiquiti", "Raspberry Pi"], "description": "Hardware vendor."},
+    "os":         {"type": "string", "description": "Operating system.", "x-opensearch": {"type": "keyword"}},
+    "open_ports": {"type": "array", "items": {"type": "integer"}, "description": "Open TCP ports."},
+    "managed":    {"type": "boolean", "description": "Under management."},
+    "location":   {"type": "object", "description": "Physical location.", "x-opensearch": {"type": "geo_point"}},
+    "notes":      {"type": "string", "description": "Operator notes.", "x-opensearch": {"type": "text"}},
+    "tags":       {"type": "array", "items": {"type": "string"}, "description": "Free-form tags."},
+    "embedding":  {"type": "array", "items": {"type": "number"}, "description": "Semantic embedding of notes.", "x-opensearch": {"type": "knn_vector", "dimension": 384}}
+  }
+}
